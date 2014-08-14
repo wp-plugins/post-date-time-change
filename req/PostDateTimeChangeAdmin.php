@@ -74,8 +74,6 @@ class PostDateTimeChangeAdmin {
 			wp_die( __( 'You do not have sufficient permissions to access this page.' ) );
 		}
 
-		$pluginurl = plugins_url($path='',$scheme=null);
-
 		$pagequery = 1;
 		if( !empty($_GET['p']) ) {
 			$pagequery = $_GET['p'];
@@ -90,7 +88,7 @@ class PostDateTimeChangeAdmin {
 			$readposttype = $_POST['posttype'];
 		}
 
-		$scriptname = parse_url($_SERVER["REQUEST_URI"], PHP_URL_PATH).'?page=postdatetimechange';
+		$scriptname = admin_url('tools.php?page=postdatetimechange');
 
 		$postdatetimechange_mgsettings = get_option('postdatetimechange_mgsettings');
 		$pagemax = $postdatetimechange_mgsettings['pagemax'];
@@ -301,16 +299,91 @@ class PostDateTimeChangeAdmin {
 		if(isset($_POST['postdatetimechange_datetime'])){ $postdatetimechange_datetimes = $_POST['postdatetimechange_datetime']; }
 
 		if ( !empty($postdatetimechange_datetimes) ) {
+
+			$upload_dir = wp_upload_dir();
+
 			foreach ( $postdatetimechange_datetimes as $key => $value ) {
 				$postdate = $value.':00';
 				$postdategmt = get_gmt_from_date($postdate);
-				$up_post = array(
-								'ID' => $key,
-								'post_date' => $postdate,
-								'post_date_gmt' => $postdategmt,
-								'post_modified' => $postdate,
-								'post_modified_gmt' => $postdategmt
-							);
+
+				$post_datas = get_post ( $key );
+				$new_subdir = FALSE;
+				if ( $post_datas->post_type === 'attachment' && get_option( 'uploads_use_yearmonth_folders' ) ) {
+					$y = substr( $postdategmt, 0, 4 );
+					$m = substr( $postdategmt, 5, 2 );
+					$subdir = "/$y/$m";
+
+					$post_data_date_gmt = $post_datas->post_date_gmt;
+					$y_post = substr( $post_data_date_gmt, 0, 4 );
+					$m_post = substr( $post_data_date_gmt, 5, 2 );
+					$subdir_post = "/$y_post/$m_post";
+
+					if ( $subdir <> $subdir_post ) { $new_subdir = TRUE; }
+				}
+
+				if ( $new_subdir ) {
+					$new_file = str_replace($upload_dir['baseurl'].$subdir_post, '', $post_datas->guid);
+					$new_file = $subdir.$new_file;
+					$newurl = $upload_dir['baseurl'].$new_file;
+					$new_file = substr( $new_file, 1 );
+					update_attached_file( $key, $new_file );
+
+					$filename = wp_basename($new_file);
+					$suffix_new_files = explode('.', $new_file);
+					$ext = end($suffix_new_files);
+
+					$upload_new_path = $upload_dir['basedir'].$subdir;
+					$upload_old_path = $upload_dir['basedir'].$subdir_post;
+					if ( !file_exists($upload_new_path) ) {
+						mkdir($upload_new_path, 0757, true);
+					}
+					copy( $upload_old_path.'/'.$filename, $upload_new_path.'/'.$filename );
+
+					if ( wp_ext2type($ext) === 'image' ){
+						$metaolddata = wp_get_attachment_metadata( $key );
+						foreach ( $metaolddata as $key1 => $key2 ){
+							if ( $key1 === 'sizes' ) {
+								foreach ( $metaolddata[$key1] as $key2 => $key3 ){
+									$oldthumbs[] = $upload_old_path.'/'.$metaolddata['sizes'][$key2]['file'];
+								}
+							}
+						}
+						foreach ( $oldthumbs as $oldthumb ) {
+							unlink( $oldthumb );
+						}
+					    unlink( $upload_old_path.'/'.$filename );
+						$metadata = wp_generate_attachment_metadata( $key, $upload_new_path.'/'.$filename );
+						wp_update_attachment_metadata( $key, $metadata );
+					}else if ( wp_ext2type($ext) === 'video' ){
+						$metadata = wp_read_video_metadata( $upload_new_path.'/'.$filename );
+						wp_update_attachment_metadata( $key, $metadata );
+					    unlink( $upload_old_path.'/'.$filename );
+					}else if ( wp_ext2type($ext) === 'audio' ){
+						$metadata = wp_read_audio_metadata( $upload_new_path.'/'.$filename );
+						wp_update_attachment_metadata( $key, $metadata );
+					    unlink( $upload_old_path.'/'.$filename );
+					} else {
+						$metadata = NULL;
+					    unlink( $upload_old_path.'/'.$filename );
+					}
+
+					$up_post = array(
+									'ID' => $key,
+									'post_date' => $postdate,
+									'post_date_gmt' => $postdategmt,
+									'post_modified' => $postdate,
+									'post_modified_gmt' => $postdategmt,
+									'guid' => $newurl
+								);
+				} else {
+					$up_post = array(
+									'ID' => $key,
+									'post_date' => $postdate,
+									'post_date_gmt' => $postdategmt,
+									'post_modified' => $postdate,
+									'post_modified_gmt' => $postdategmt
+								);
+				}
 				wp_update_post( $up_post );
 			}
 		}
