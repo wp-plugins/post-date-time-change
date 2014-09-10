@@ -44,16 +44,13 @@ class PostDateTimeChangeAdmin {
 		add_management_page('Post Date Time Change', 'Post Date Time Change', 'manage_options', 'postdatetimechange', array($this, 'manage_page'));
 	}
 
-	/* ==================================================
+	/* =================================================
 	 * Add Css and Script
 	 * @since	1.0
 	 */
 	function load_custom_wp_admin_style() {
-		wp_enqueue_style( 'jquery-ui-tabs', POSTDATETIMECHANGE_PLUGIN_URL.'/css/jquery-ui.css' );
 		wp_enqueue_style( 'jquery-datetimepicker', POSTDATETIMECHANGE_PLUGIN_URL.'/css/jquery.datetimepicker.css' );
 		wp_enqueue_script( 'jquery' );
-		wp_enqueue_script( 'jquery-ui-tabs' );
-		wp_enqueue_script( 'jquery-ui-tabs-in', POSTDATETIMECHANGE_PLUGIN_URL.'/js/jquery-ui-tabs-in.js' );
 		wp_enqueue_script( 'jquery-datetimepicker', POSTDATETIMECHANGE_PLUGIN_URL.'/js/jquery.datetimepicker.js', null, '2.3.4' );
 	}
 
@@ -96,17 +93,9 @@ class PostDateTimeChangeAdmin {
 		?>
 		<div class="wrap">
 		<h2>Post Date Time Change</h2>
-	<div id="tabs">
-	  <ul>
-	    <li><a href="#tabs-1"><?php _e('Settings'); ?></a></li>
-	<!--
-		<li><a href="#tabs-2">FAQ</a></li>
-	 -->
-	  </ul>
 
-	  <div id="tabs-1">
-		<div class="wrap">
 		<h2><?php _e('Settings'); ?></h2>
+
 			<form method="post" action="<?php echo $scriptname; ?>">
 
 			<p class="submit">
@@ -115,6 +104,23 @@ class PostDateTimeChangeAdmin {
 
 			<p>
 			<div><?php _e('Number of titles to show to this page', 'postdatetimechange'); ?>:<input type="text" name="postdatetimechange_mgsettings_pagemax" value="<?php echo $pagemax; ?>" size="3" /></div>
+
+			<div><?php _e('Type'); ?>
+				<select name="posttype">
+				<?php
+				$selectedany = NULL;
+				$selectedattach = NULL;
+				if ( $readposttype === 'any' ) {
+					$selectedany = ' selected';
+				} else if ( $readposttype === 'attachment' ) {
+					$selectedattach = ' selected';
+				}
+				?>
+				<option value="any"<?php echo $selectedany; ?>><?php _e('Posts'); ?></option>';
+				<option value="attachment"<?php echo $selectedattach; ?>><?php _e('Media'); ?></option>';
+				<input type="submit" value="<?php _e('Change'); ?>">
+				</select>
+			</div>
 
 			<?php
 			$args = array(
@@ -144,33 +150,19 @@ class PostDateTimeChangeAdmin {
 			?>
 			<table class="wp-list-table widefat">
 			<tbody>
-				<tr><td colspan="3">
-				<td align="right">
+				<tr>
+				<td align="right" colspan="2">
 				<?php $this->pagenation($page, $pagebegin, $pageend, $pagelast, $scriptname, $readposttype);
 				?>
 				</td>
 				</tr>
 				<tr>
-				<td align="left" valign="middle"><?php _e('Title'); ?></td>
-				<td align="left" valign="middle"><div><?php _e('Type'); ?>
-				<select name="posttype">
-				<?php
-				$selectedany = NULL;
-				$selectedattach = NULL;
-				if ( $readposttype === 'any' ) {
-					$selectedany = ' selected';
-				} else if ( $readposttype === 'attachment' ) {
-					$selectedattach = ' selected';
-				}
-				?>
-				<option value="any"<?php echo $selectedany; ?>><?php _e('Posts'); ?></option>';
-				<option value="attachment"<?php echo $selectedattach; ?>><?php _e('Media'); ?></option>';
-				<input type="submit" value="<?php _e('Change'); ?>">
-				</select>
-				</div>
+				<td>
+				<div><?php _e('Title'); ?></div>
+				<div><?php _e('Type'); ?></div>
+				<div><?php _e('Date/Time'); ?></div>
 				</td>
-				<td align="left" valign="middle"><?php _e('Date/Time'); ?></td>
-				<td align="left" valign="middle"><?php _e('Edit date and time'); ?></td>
+				<td><?php _e('Edit date and time'); ?></td>
 				</tr>
 			<?php
 
@@ -189,10 +181,12 @@ class PostDateTimeChangeAdmin {
 						$newdate = substr( $date , 0 , strlen($date)-3 );
 					?>
 						<tr>
-							<td align="left" valign="middle"><a style="color: #4682b4;" title="<?php _e('View');?>" href="<?php echo $link; ?>" target="_blank"><?php echo $title; ?></a></td>
-							<td align="left" valign="middle"><?php echo $posttype; ?></td>
-							<td align="left" valign="middle"><?php echo $date; ?></td>
-							<td align="left" valign="middle">
+							<td>
+							<div><a style="color: #4682b4;" title="<?php _e('View');?>" href="<?php echo $link; ?>" target="_blank"><?php echo $title; ?></a></div>
+							<div><?php echo $posttype; ?></div>
+							<div><?php echo $date; ?></div>
+							</td>
+							<td>
 							<input type="text" id="datetimepicker<?php echo $postid; ?>" name="postdatetimechange_datetime[<?php echo $postid ?>]" value="<?php echo $newdate; ?>" />
 
 							</td>
@@ -202,8 +196,8 @@ class PostDateTimeChangeAdmin {
 			}
 
 			?>
-				<tr><td colspan="3">
-				<td align="right">
+				<tr>
+				<td align="right" colspan="2">
 				<?php $this->pagenation($page, $pagebegin, $pageend, $pagelast, $scriptname, $readposttype);
 				?>
 				</td>
@@ -216,19 +210,6 @@ class PostDateTimeChangeAdmin {
 			</p>
 
 			</form>
-		</div>
-	  </div>
-
-	<!--
-	  <div id="tabs-2">
-		<div class="wrap">
-		<h2>FAQ</h2>
-
-		</div>
-	  </div>
-	-->
-
-	</div>
 
 		</div>
 		<?php
