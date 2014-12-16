@@ -3,8 +3,8 @@ Contributors: Katsushi Kawamori
 Donate link: http://gallerylink.nyanko.org/medialink/post-date-time-change/
 Tags: admin, attachment, attachments, date, edit, media, page, pages, post, posts, time
 Requires at least: 3.0.1
-Tested up to: 3.4
-Stable tag: 1.2
+Tested up to: 4.0.1
+Stable tag: 1.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -32,6 +32,9 @@ none
 
 == Changelog ==
 
+= 1.3 =
+Fixed a problem of Java Script for admin screen.
+
 = 1.2 =
 Change management screen to responsive menu design.
 
@@ -42,6 +45,7 @@ Attachments organize into month- and year-based folders by automatic.
 
 == Upgrade Notice ==
 
+= 1.3 =
 = 1.2 =
 = 1.1 =
 = 1.0 =

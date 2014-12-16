@@ -187,7 +187,7 @@ class PostDateTimeChangeAdmin {
 							<div><?php echo $date; ?></div>
 							</td>
 							<td>
-							<input type="text" id="datetimepicker<?php echo $postid; ?>" name="postdatetimechange_datetime[<?php echo $postid ?>]" value="<?php echo $newdate; ?>" />
+							<input type="text" id="datetimepicker-postdatetimechange<?php echo $postid; ?>" name="postdatetimechange_datetime[<?php echo $postid ?>]" value="<?php echo $newdate; ?>" />
 
 							</td>
 					<?php
@@ -390,7 +390,6 @@ $postdatetimechange_add_js = <<<POSTDATETIMECHANGE1
 
 <!-- BEGIN: Post Date Time Change -->
 <script type="text/javascript">
-jQuery(function(){
 POSTDATETIMECHANGE1;
 
 			$args = array(
@@ -421,7 +420,7 @@ POSTDATETIMECHANGE1;
 						$postid = $postpage->ID;
 $postdatetimechange_add_js .= <<<POSTDATETIMECHANGE2
 
-jQuery('#datetimepicker
+jQuery('#datetimepicker-postdatetimechange
 POSTDATETIMECHANGE2;
 			$postdatetimechange_add_js .= $postid;
 $postdatetimechange_add_js .= <<<POSTDATETIMECHANGE3
@@ -433,7 +432,6 @@ POSTDATETIMECHANGE3;
 
 $postdatetimechange_add_js .= <<<POSTDATETIMECHANGE4
 
-});
 </script>
 <!-- END: Post Date Time Change -->
 
