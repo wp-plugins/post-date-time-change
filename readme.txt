@@ -1,10 +1,10 @@
 === Post Date Time Change ===
 Contributors: Katsushi Kawamori
-Donate link: http://gallerylink.nyanko.org/medialink/post-date-time-change/
+Donate link: http://pledgie.com/campaigns/28307
 Tags: admin, attachment, attachments, date, edit, media, page, pages, post, posts, time
 Requires at least: 3.0.1
-Tested up to: 4.0.1
-Stable tag: 1.3
+Tested up to: 4.1
+Stable tag: 1.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -15,7 +15,7 @@ Collectively change the date and time of each article of post or page or media l
 * Collectively change the date and time of each article of post or page or media library.
 * Adopt [DateTimePicker](http://xdsoft.net/jqplugins/datetimepicker/). jQuery plugin select date and time.
 
-*   Japanese (ja) - [Katsushi Kawamori](http://gallerylink.nyanko.org/medialink/post-date-time-change/)
+*   Japanese (ja) - [Katsushi Kawamori](http://riverforest-wp.info/)
 
 == Installation ==
 
@@ -32,6 +32,12 @@ none
 
 == Changelog ==
 
+= 1.4 =
+Add screen of donate.
+Change the display of the message.
+Change readme.txt.
+Change /languages.
+
 = 1.3 =
 Fixed a problem of Java Script for admin screen.
 
@@ -45,6 +51,7 @@ Attachments organize into month- and year-based folders by automatic.
 
 == Upgrade Notice ==
 
+= 1.4 =
 = 1.3 =
 = 1.2 =
 = 1.1 =

@@ -11,5 +11,17 @@ msgstr ""
 "Language: ja\n"
 "X-Generator: Poedit 1.6.7\n"
 
+msgid ""
+"Collectively change the date and time of each article of post or page or "
+"media library."
+msgstr ""
+"ポストやページまたはメディアライブラリの各記事の日付と時刻を変更します。"
+
 msgid "Number of titles to show to this page"
 msgstr "このページへ表示数するタイトルの数"
+
+msgid ""
+"I need a donation. This is because, I want to continue the development and "
+"support of plugins."
+msgstr ""
+"私はプラグインの開発とサポートを継続させるために寄付を必要としています。"

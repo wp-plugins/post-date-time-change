@@ -10,5 +10,15 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 1.6.7\n"
 
+msgid ""
+"Collectively change the date and time of each article of post or page or "
+"media library."
+msgstr ""
+
 msgid "Number of titles to show to this page"
+msgstr ""
+
+msgid ""
+"I need a donation. This is because, I want to continue the development and "
+"support of plugins."
 msgstr ""

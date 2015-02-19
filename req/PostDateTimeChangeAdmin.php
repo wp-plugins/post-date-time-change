@@ -94,6 +94,13 @@ class PostDateTimeChangeAdmin {
 		<div class="wrap">
 		<h2>Post Date Time Change</h2>
 
+		<div style="padding:10px;border:#CCC 2px solid; margin:0 0 20px 0">
+			<h3><?php _e('I need a donation. This is because, I want to continue the development and support of plugins.', 'useragentthemesswitcher'); ?></h3>
+			<div align="right">Katsushi Kawamori</div>
+			<h3 style="float: left;"><?php _e('Donate to this plugin &#187;'); ?></h3>
+<a href='https://pledgie.com/campaigns/28307' target="_blank"><img alt='Click here to lend your support to: Various Plugins for WordPress and make a donation at pledgie.com !' src='https://pledgie.com/campaigns/28307.png?skin_name=chrome' border='0' ></a>
+		</div>
+
 		<h2><?php _e('Settings'); ?></h2>
 
 			<form method="post" action="<?php echo $scriptname; ?>">
@@ -268,6 +275,8 @@ class PostDateTimeChangeAdmin {
 						'pagemax' => intval($_POST['postdatetimechange_mgsettings_pagemax'])
 						);
 		update_option( 'postdatetimechange_mgsettings', $mgsettings_tbl );
+
+		echo '<div class="updated"><ul><li>'.__('Settings saved.').'</li></ul></div>';
 
 	}
 
