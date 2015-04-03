@@ -25,3 +25,9 @@ msgid ""
 "support of plugins."
 msgstr ""
 "私はプラグインの開発とサポートを継続させるために寄付を必要としています。"
+
+msgid "Change the date and time"
+msgstr "日付と時刻を変更します"
+
+msgid "Changed the date and time."
+msgstr "日付と時刻を変更しました。"

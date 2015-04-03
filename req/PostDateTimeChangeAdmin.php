@@ -49,8 +49,11 @@ class PostDateTimeChangeAdmin {
 	 * @since	1.0
 	 */
 	function load_custom_wp_admin_style() {
+		wp_enqueue_style( 'jquery-responsiveTabs', POSTDATETIMECHANGE_PLUGIN_URL.'/css/responsive-tabs.css' );
+		wp_enqueue_style( 'jquery-responsiveTabs-style', POSTDATETIMECHANGE_PLUGIN_URL.'/css/style.css' );
 		wp_enqueue_style( 'jquery-datetimepicker', POSTDATETIMECHANGE_PLUGIN_URL.'/css/jquery.datetimepicker.css' );
 		wp_enqueue_script( 'jquery' );
+		wp_enqueue_script( 'jquery-responsiveTabs', POSTDATETIMECHANGE_PLUGIN_URL.'/js/jquery.responsiveTabs.min.js' );
 		wp_enqueue_script( 'jquery-datetimepicker', POSTDATETIMECHANGE_PLUGIN_URL.'/js/jquery.datetimepicker.js', null, '2.3.4' );
 	}
 
@@ -79,10 +82,25 @@ class PostDateTimeChangeAdmin {
 		if( !empty($_GET['posttype']) ) {
 			$readposttype = $_GET['posttype'];
 		}
-		if( !empty($_POST) ) { 
-			$this->options_updated();
-			$this->posts_updated();
-			$readposttype = $_POST['posttype'];
+		$catfilter = 0;
+		if( !empty($_GET['cat']) ) {
+			$catfilter = $_GET['cat'];
+		}
+		if( !empty($_POST) ) {
+			if ( !empty($_POST['ShowToPage']) ) {
+				$this->options_updated();
+				echo '<div class="updated"><ul><li>'.__('Settings saved.').'</li></ul></div>';
+			}
+			if ( !empty($_POST['UpdateDateTimeChange']) ) {
+				$this->posts_updated();
+				echo '<div class="updated"><ul><li>'.__('Changed the date and time.', 'postdatetimechange').'</li></ul></div>';
+			}
+			if( !empty($_POST['posttype']) ) {
+				$readposttype = $_POST['posttype'];
+			}
+			if( !empty($_POST['cat']) ) {
+				$catfilter = $_POST['cat'];
+			}
 		}
 
 		$scriptname = admin_url('tools.php?page=postdatetimechange');
@@ -93,49 +111,73 @@ class PostDateTimeChangeAdmin {
 		?>
 		<div class="wrap">
 		<h2>Post Date Time Change</h2>
+			<div id="postdatetimechange-tabs">
+				<ul>
+				<li><a href="#postdatetimechange-tabs-1"><?php _e('Edit date and time'); ?></a></li>
+				<li><a href="#postdatetimechange-tabs-2"><?php _e('Donate to this plugin &#187;'); ?></a></li>
+				</ul>
+				<div id="postdatetimechange-tabs-1">
 
-		<div style="padding:10px;border:#CCC 2px solid; margin:0 0 20px 0">
-			<h3><?php _e('I need a donation. This is because, I want to continue the development and support of plugins.', 'useragentthemesswitcher'); ?></h3>
-			<div align="right">Katsushi Kawamori</div>
-			<h3 style="float: left;"><?php _e('Donate to this plugin &#187;'); ?></h3>
-<a href='https://pledgie.com/campaigns/28307' target="_blank"><img alt='Click here to lend your support to: Various Plugins for WordPress and make a donation at pledgie.com !' src='https://pledgie.com/campaigns/28307.png?skin_name=chrome' border='0' ></a>
-		</div>
-
-		<h2><?php _e('Settings'); ?></h2>
+			<h3><?php _e('Edit date and time'); ?></h3>
 
 			<form method="post" action="<?php echo $scriptname; ?>">
 
 			<p class="submit">
-			  <input type="submit" name="Submit" value="<?php _e('Save Changes') ?>" />
+			  <input type="submit" name="UpdateDateTimeChange" value="<?php _e('Change the date and time', 'postdatetimechange') ?>" />
 			</p>
 
 			<p>
-			<div><?php _e('Number of titles to show to this page', 'postdatetimechange'); ?>:<input type="text" name="postdatetimechange_mgsettings_pagemax" value="<?php echo $pagemax; ?>" size="3" /></div>
+			<div style="float:left;"><?php _e('Number of titles to show to this page', 'postdatetimechange'); ?>:<input type="text" name="postdatetimechange_mgsettings_pagemax" value="<?php echo $pagemax; ?>" size="3" /></div>
+			<input type="submit" name="ShowToPage" value="<?php _e('Save') ?>" />
+			<div style="clear:both"></div>
 
 			<div><?php _e('Type'); ?>
-				<select name="posttype">
-				<?php
-				$selectedany = NULL;
-				$selectedattach = NULL;
-				if ( $readposttype === 'any' ) {
-					$selectedany = ' selected';
-				} else if ( $readposttype === 'attachment' ) {
-					$selectedattach = ' selected';
-				}
-				?>
-				<option value="any"<?php echo $selectedany; ?>><?php _e('Posts'); ?></option>';
-				<option value="attachment"<?php echo $selectedattach; ?>><?php _e('Media'); ?></option>';
-				<input type="submit" value="<?php _e('Change'); ?>">
-				</select>
-			</div>
-
+			<select name="posttype">
 			<?php
-			$args = array(
-				'post_type' =>  $readposttype,
-				'numberposts' => -1,
-				'orderby' => 'date',
-				'order' => 'DESC'
-				); 
+			$selectedany = NULL;
+			$selectedattach = NULL;
+			if ( $readposttype === 'any' ) {
+				$selectedany = ' selected';
+			} else if ( $readposttype === 'attachment' ) {
+				$selectedattach = ' selected';
+			}
+			?>
+			<option value="any"<?php echo $selectedany; ?>><?php _e('Posts'); ?></option>
+			<option value="attachment"<?php echo $selectedattach; ?>><?php _e('Media'); ?></option>
+			</select>
+			<input type="submit" value="<?php _e('Change'); ?>">
+			</div>
+			<?php
+			if ( $readposttype === 'attachment' ) {
+				$args = array(
+					'post_type' => 'attachment',
+					'numberposts' => -1,
+					'orderby' => 'date',
+					'order' => 'DESC'
+					); 
+			} else {
+				$args = array(
+					'category' => $catfilter,
+					'post_type' => $readposttype,
+					'numberposts' => -1,
+					'orderby' => 'date',
+					'order' => 'DESC'
+					); 
+				?>
+				<div>
+				<?php
+				_e('Categories');
+				$catargs = array(
+					'show_option_all' => __('All categories'),
+					'hierarchical' => 1,
+					'selected' => $catfilter
+				);
+				wp_dropdown_categories($catargs);
+				?>
+				<input type="submit" value="<?php _e('Filter'); ?>">
+				</div>
+				<?php
+			}
 
 			$postpages = get_posts($args);
 
@@ -159,7 +201,7 @@ class PostDateTimeChangeAdmin {
 			<tbody>
 				<tr>
 				<td align="right" colspan="2">
-				<?php $this->pagenation($page, $pagebegin, $pageend, $pagelast, $scriptname, $readposttype);
+				<?php $this->pagenation($page, $pagebegin, $pageend, $pagelast, $scriptname, $readposttype, $catfilter);
 				?>
 				</td>
 				</tr>
@@ -205,7 +247,7 @@ class PostDateTimeChangeAdmin {
 			?>
 				<tr>
 				<td align="right" colspan="2">
-				<?php $this->pagenation($page, $pagebegin, $pageend, $pagelast, $scriptname, $readposttype);
+				<?php $this->pagenation($page, $pagebegin, $pageend, $pagelast, $scriptname, $readposttype, $catfilter);
 				?>
 				</td>
 				</tr>
@@ -213,11 +255,24 @@ class PostDateTimeChangeAdmin {
 			</table>
 
 			<p class="submit">
-			  <input type="submit" name="Submit" value="<?php _e('Save Changes') ?>" />
+			  <input type="submit" name="UpdateDateTimeChange" value="<?php _e('Change the date and time', 'postdatetimechange') ?>" />
 			</p>
 
 			</form>
 
+		</div>
+
+		<div id="postdatetimechange-tabs-2">
+		<div class="wrap">
+		<div style="padding:10px;border:#CCC 2px solid; margin:0 0 20px 0">
+			<h3><?php _e('I need a donation. This is because, I want to continue the development and support of plugins.', 'postdatetimechange'); ?></h3>
+			<div align="right">Katsushi Kawamori</div>
+			<h3 style="float: left;"><?php _e('Donate to this plugin &#187;'); ?></h3>
+<a href='https://pledgie.com/campaigns/28307' target="_blank"><img alt='Click here to lend your support to: Various Plugins for WordPress and make a donation at pledgie.com !' src='https://pledgie.com/campaigns/28307.png?skin_name=chrome' border='0' ></a>
+		</div>
+		</div>
+
+		</div>
 		</div>
 		<?php
 	}
@@ -231,16 +286,17 @@ class PostDateTimeChangeAdmin {
 	 * string	$pagelast
 	 * string	$scriptname
 	 * string	$readposttype
+	 * string	$catfilter
 	 * return	$html
 	 */
-	function pagenation($page, $pagebegin, $pageend, $pagelast, $scriptname, $readposttype){
+	function pagenation($page, $pagebegin, $pageend, $pagelast, $scriptname, $readposttype, $catfilter){
 
 			$pageprev = $page - 1;
 			$pagenext = $page + 1;
-			$scriptnamefirst = add_query_arg( array('p' => '1', 'posttype' => $readposttype ),  $scriptname);
-			$scriptnameprev = add_query_arg( array('p' => $pageprev, 'posttype' => $readposttype ),  $scriptname);
-			$scriptnamenext = add_query_arg( array('p' => $pagenext, 'posttype' => $readposttype ),  $scriptname);
-			$scriptnamelast = add_query_arg( array('p' => $pagelast, 'posttype' => $readposttype ),  $scriptname);
+			$scriptnamefirst = add_query_arg( array('p' => '1', 'posttype' => $readposttype, 'cat' => $catfilter ),  $scriptname);
+			$scriptnameprev = add_query_arg( array('p' => $pageprev, 'posttype' => $readposttype, 'cat' => $catfilter ),  $scriptname);
+			$scriptnamenext = add_query_arg( array('p' => $pagenext, 'posttype' => $readposttype, 'cat' => $catfilter ),  $scriptname);
+			$scriptnamelast = add_query_arg( array('p' => $pagelast, 'posttype' => $readposttype, 'cat' => $catfilter ),  $scriptname);
 			?>
 			<div class='tablenav-pages'>
 			<span class='pagination-links'>
@@ -275,8 +331,6 @@ class PostDateTimeChangeAdmin {
 						'pagemax' => intval($_POST['postdatetimechange_mgsettings_pagemax'])
 						);
 		update_option( 'postdatetimechange_mgsettings', $mgsettings_tbl );
-
-		echo '<div class="updated"><ul><li>'.__('Settings saved.').'</li></ul></div>';
 
 	}
 
@@ -398,6 +452,11 @@ class PostDateTimeChangeAdmin {
 $postdatetimechange_add_js = <<<POSTDATETIMECHANGE1
 
 <!-- BEGIN: Post Date Time Change -->
+<script type="text/javascript">
+jQuery('#postdatetimechange-tabs').responsiveTabs({
+  startCollapsed: 'accordion'
+});
+</script>
 <script type="text/javascript">
 POSTDATETIMECHANGE1;
 

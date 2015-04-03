@@ -3,8 +3,8 @@ Contributors: Katsushi Kawamori
 Donate link: http://pledgie.com/campaigns/28307
 Tags: admin, attachment, attachments, date, edit, media, page, pages, post, posts, time
 Requires at least: 3.0.1
-Tested up to: 4.1
-Stable tag: 1.4
+Tested up to: 4.1.1
+Stable tag: 2.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -32,6 +32,10 @@ none
 
 == Changelog ==
 
+= 2.0 =
+Add categories filter.
+Supported responsive tab menu.
+
 = 1.4 =
 Add screen of donate.
 Change the display of the message.
@@ -51,6 +55,7 @@ Attachments organize into month- and year-based folders by automatic.
 
 == Upgrade Notice ==
 
+= 2.0 =
 = 1.4 =
 = 1.3 =
 = 1.2 =
