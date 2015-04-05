@@ -1,0 +1,28 @@
+.post-date-time-change-pages {
+	width: 100%;
+	text-align: center;
+	margin: 30px;
+	height: 0;
+}
+
+.post-date-time-change-pages .post-date-time-change-links {
+	font-size: 18px;
+}
+
+.post-date-time-change-pages .post-date-time-change-links a {
+	padding: 8px 20px 11px;
+	font-size: 18px;
+	text-decoration: none;
+	background: #d3d3d3;
+}
+
+.post-date-time-change-pages .post-date-time-change-links a:hover {
+	color: #000000;
+	background: #d3d3d3;
+}
+
+.post-date-time-change-pages .post-date-time-change-links {
+	padding: 10px;
+	font-size: 14px;
+}
+

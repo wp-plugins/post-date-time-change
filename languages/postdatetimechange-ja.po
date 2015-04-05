@@ -31,3 +31,9 @@ msgstr "日付と時刻を変更します"
 
 msgid "Changed the date and time."
 msgstr "日付と時刻を変更しました。"
+
+msgid "Mime type"
+msgstr "MIMEタイプ"
+
+msgid "All Mime types"
+msgstr "すべてのMIMEタイプ"

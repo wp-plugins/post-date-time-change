@@ -28,3 +28,9 @@ msgstr ""
 
 msgid "Changed the date and time."
 msgstr ""
+
+msgid "Mime type"
+msgstr ""
+
+msgid "All Mime types"
+msgstr ""

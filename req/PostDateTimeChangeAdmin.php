@@ -52,6 +52,7 @@ class PostDateTimeChangeAdmin {
 		wp_enqueue_style( 'jquery-responsiveTabs', POSTDATETIMECHANGE_PLUGIN_URL.'/css/responsive-tabs.css' );
 		wp_enqueue_style( 'jquery-responsiveTabs-style', POSTDATETIMECHANGE_PLUGIN_URL.'/css/style.css' );
 		wp_enqueue_style( 'jquery-datetimepicker', POSTDATETIMECHANGE_PLUGIN_URL.'/css/jquery.datetimepicker.css' );
+		wp_enqueue_style( 'post-date-time-change',  POSTDATETIMECHANGE_PLUGIN_URL.'/css/post-date-time-change.css' );
 		wp_enqueue_script( 'jquery' );
 		wp_enqueue_script( 'jquery-responsiveTabs', POSTDATETIMECHANGE_PLUGIN_URL.'/js/jquery.responsiveTabs.min.js' );
 		wp_enqueue_script( 'jquery-datetimepicker', POSTDATETIMECHANGE_PLUGIN_URL.'/js/jquery.datetimepicker.js', null, '2.3.4' );
@@ -83,8 +84,12 @@ class PostDateTimeChangeAdmin {
 			$readposttype = $_GET['posttype'];
 		}
 		$catfilter = 0;
+		$mimefilter = NULL;
 		if( !empty($_GET['cat']) ) {
 			$catfilter = $_GET['cat'];
+		}
+		if( !empty($_GET['mime']) ) {
+			$mimefilter = $_GET['mime'];
 		}
 		if( !empty($_POST) ) {
 			if ( !empty($_POST['ShowToPage']) ) {
@@ -100,6 +105,9 @@ class PostDateTimeChangeAdmin {
 			}
 			if( !empty($_POST['cat']) ) {
 				$catfilter = $_POST['cat'];
+			}
+			if( !empty($_POST['mime']) ) {
+				$mimefilter = $_POST['mime'];
 			}
 		}
 
@@ -122,16 +130,16 @@ class PostDateTimeChangeAdmin {
 
 			<form method="post" action="<?php echo $scriptname; ?>">
 
-			<p class="submit">
-			  <input type="submit" name="UpdateDateTimeChange" value="<?php _e('Change the date and time', 'postdatetimechange') ?>" />
-			</p>
+			<div class="submit">
+			 	<input type="submit" name="UpdateDateTimeChange" value="<?php _e('Change the date and time', 'postdatetimechange') ?>" />
+			</div>
 
 			<p>
 			<div style="float:left;"><?php _e('Number of titles to show to this page', 'postdatetimechange'); ?>:<input type="text" name="postdatetimechange_mgsettings_pagemax" value="<?php echo $pagemax; ?>" size="3" /></div>
 			<input type="submit" name="ShowToPage" value="<?php _e('Save') ?>" />
 			<div style="clear:both"></div>
 
-			<div><?php _e('Type'); ?>
+			<div>
 			<select name="posttype">
 			<?php
 			$selectedany = NULL;
@@ -145,16 +153,30 @@ class PostDateTimeChangeAdmin {
 			<option value="any"<?php echo $selectedany; ?>><?php _e('Posts'); ?></option>
 			<option value="attachment"<?php echo $selectedattach; ?>><?php _e('Media'); ?></option>
 			</select>
-			<input type="submit" value="<?php _e('Change'); ?>">
-			</div>
+			<input type="submit" value="<?php _e('Apply'); ?>">
+			<span style="margin-right: 1em;"></span>
 			<?php
 			if ( $readposttype === 'attachment' ) {
 				$args = array(
 					'post_type' => 'attachment',
+					'post_mime_type' => $mimefilter,
 					'numberposts' => -1,
 					'orderby' => 'date',
 					'order' => 'DESC'
 					); 
+				?>
+				<select name="mime" style="width: 180px;">
+				<option value=""><?php echo esc_attr( __( 'All Mime types', 'postdatetimechange' ) ); ?></option> 
+				<?php
+				foreach ( wp_get_mime_types() as $exts => $mime ) {
+					?>
+					<option value="<?php echo esc_attr($mime); ?>"<?php if ($mimefilter === $mime) echo 'selected';?>><?php echo esc_attr($mime); ?></option>
+					<?php
+				}
+				?>
+				</select>
+				<input type="submit" value="<?php _e('Filter'); ?>">
+				<?php
 			} else {
 				$args = array(
 					'category' => $catfilter,
@@ -163,10 +185,6 @@ class PostDateTimeChangeAdmin {
 					'orderby' => 'date',
 					'order' => 'DESC'
 					); 
-				?>
-				<div>
-				<?php
-				_e('Categories');
 				$catargs = array(
 					'show_option_all' => __('All categories'),
 					'hierarchical' => 1,
@@ -175,10 +193,11 @@ class PostDateTimeChangeAdmin {
 				wp_dropdown_categories($catargs);
 				?>
 				<input type="submit" value="<?php _e('Filter'); ?>">
-				</div>
 				<?php
 			}
-
+			?>
+			</div>
+			<?php
 			$postpages = get_posts($args);
 
 			$pageallcount = 0;
@@ -197,22 +216,28 @@ class PostDateTimeChangeAdmin {
 			$pagelast = ceil($pageallcount / $pagemax);
 
 			?>
-			<table class="wp-list-table widefat">
-			<tbody>
-				<tr>
-				<td align="right" colspan="2">
-				<?php $this->pagenation($page, $pagebegin, $pageend, $pagelast, $scriptname, $readposttype, $catfilter);
+				<?php $this->pagenation($page, $pagebegin, $pageend, $pagelast, $scriptname, $readposttype, $catfilter, $mimefilter);
 				?>
-				</td>
-				</tr>
-				<tr>
-				<td>
-				<div><?php _e('Title'); ?></div>
-				<div><?php _e('Type'); ?></div>
-				<div><?php _e('Date/Time'); ?></div>
-				</td>
-				<td><?php _e('Edit date and time'); ?></td>
-				</tr>
+				<div style="border-bottom: 1px solid; padding-top: 5px; padding-bottom: 5px;">
+					<div>
+					<?php
+					if ( $readposttype === 'attachment' ) {
+						_e('Thumbnail'); ?> -
+					<?php
+					}
+					_e('Title'); ?> -
+					<?php
+					if ( $readposttype === 'any' ) {
+						_e('Type'); ?> -
+					<?php
+					} else if ( $readposttype === 'attachment' ) {
+						_e('Mime type', 'postdatetimechange'); ?> -
+					<?php
+					}
+					_e('Date/Time'); ?> -
+					<?php _e('Edit date and time'); ?>
+					</div>
+				</div>
 			<?php
 
 			if ($postpages) {
@@ -222,41 +247,43 @@ class PostDateTimeChangeAdmin {
 						$postid = $postpage->ID;
 						$title = $postpage->post_title;
 						$link = $postpage->guid;
+						$thumb_html = NULL;
 						if ( $readposttype === 'attachment' ) {
 							$link = get_attachment_link($postpage->ID);
+							$image_attr_thumbnail = wp_get_attachment_image_src($postpage->ID, 'thumbnail', true);
+							$thumb_html = '<img width="40" height="40" src="'.$image_attr_thumbnail[0].'" align="middle">';
+							$posttype = $postpage->post_mime_type;
 						}
-						$posttype = $postpage->post_type;
+						if ( $readposttype === 'any' ) {
+							$posttype = $postpage->post_type;
+						}
 						$date = $postpage->post_date;
 						$newdate = substr( $date , 0 , strlen($date)-3 );
 					?>
-						<tr>
-							<td>
-							<div><a style="color: #4682b4;" title="<?php _e('View');?>" href="<?php echo $link; ?>" target="_blank"><?php echo $title; ?></a></div>
-							<div><?php echo $posttype; ?></div>
-							<div><?php echo $date; ?></div>
-							</td>
-							<td>
-							<input type="text" id="datetimepicker-postdatetimechange<?php echo $postid; ?>" name="postdatetimechange_datetime[<?php echo $postid ?>]" value="<?php echo $newdate; ?>" />
-
-							</td>
+					<div style="border-bottom: 1px solid; padding-top: 5px; padding-bottom: 5px;">
+						<div style="float: left;">
+						<?php echo $thumb_html; ?>
+						<a style="color: #4682b4;" title="<?php _e('View');?>" href="<?php echo $link; ?>" target="_blank"><?php echo $title; ?></a>
+						<span style="margin-right: 1em;"></span>
+						<?php echo $posttype; ?>
+						<span style="margin-right: 1em;"></span>
+						<?php echo $date; ?>
+						<input type="text" id="datetimepicker-postdatetimechange<?php echo $postid; ?>" name="postdatetimechange_datetime[<?php echo $postid ?>]" value="<?php echo $newdate; ?>" />
+						</div>
+						<div style="clear:both"></div>
+					</div>
 					<?php
 					}
 				}
 			}
 
 			?>
-				<tr>
-				<td align="right" colspan="2">
-				<?php $this->pagenation($page, $pagebegin, $pageend, $pagelast, $scriptname, $readposttype, $catfilter);
+				<?php $this->pagenation($page, $pagebegin, $pageend, $pagelast, $scriptname, $readposttype, $catfilter, $mimefilter);
 				?>
-				</td>
-				</tr>
-			</tbody>
-			</table>
 
-			<p class="submit">
-			  <input type="submit" name="UpdateDateTimeChange" value="<?php _e('Change the date and time', 'postdatetimechange') ?>" />
-			</p>
+			<div class="submit">
+				<input type="submit" name="UpdateDateTimeChange" value="<?php _e('Change the date and time', 'postdatetimechange') ?>" />
+			</div>
 
 			</form>
 
@@ -287,19 +314,20 @@ class PostDateTimeChangeAdmin {
 	 * string	$scriptname
 	 * string	$readposttype
 	 * string	$catfilter
+	 * string	$mimefilter
 	 * return	$html
 	 */
-	function pagenation($page, $pagebegin, $pageend, $pagelast, $scriptname, $readposttype, $catfilter){
+	function pagenation($page, $pagebegin, $pageend, $pagelast, $scriptname, $readposttype, $catfilter, $mimefilter){
 
 			$pageprev = $page - 1;
 			$pagenext = $page + 1;
-			$scriptnamefirst = add_query_arg( array('p' => '1', 'posttype' => $readposttype, 'cat' => $catfilter ),  $scriptname);
-			$scriptnameprev = add_query_arg( array('p' => $pageprev, 'posttype' => $readposttype, 'cat' => $catfilter ),  $scriptname);
-			$scriptnamenext = add_query_arg( array('p' => $pagenext, 'posttype' => $readposttype, 'cat' => $catfilter ),  $scriptname);
-			$scriptnamelast = add_query_arg( array('p' => $pagelast, 'posttype' => $readposttype, 'cat' => $catfilter ),  $scriptname);
+			$scriptnamefirst = add_query_arg( array('p' => '1', 'posttype' => $readposttype, 'cat' => $catfilter, 'mime' => $mimefilter ),  $scriptname);
+			$scriptnameprev = add_query_arg( array('p' => $pageprev, 'posttype' => $readposttype, 'cat' => $catfilter, 'mime' => $mimefilter ),  $scriptname);
+			$scriptnamenext = add_query_arg( array('p' => $pagenext, 'posttype' => $readposttype, 'cat' => $catfilter, 'mime' => $mimefilter ),  $scriptname);
+			$scriptnamelast = add_query_arg( array('p' => $pagelast, 'posttype' => $readposttype, 'cat' => $catfilter, 'mime' => $mimefilter ),  $scriptname);
 			?>
-			<div class='tablenav-pages'>
-			<span class='pagination-links'>
+			<div class="post-date-time-change-pages">
+			<span class="post-date-time-change-links">
 			<?php
 			if ( $page <> 1 ){
 				?><a title='<?php _e('Go to the first page'); ?>' href='<?php echo $scriptnamefirst; ?>'>&laquo;</a>
