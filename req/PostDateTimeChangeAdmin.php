@@ -475,6 +475,20 @@ class PostDateTimeChangeAdmin {
 		if( !empty($_POST['posttype']) ) {
 			$readposttype = $_POST['posttype'];
 		}
+		$catfilter = 0;
+		$mimefilter = NULL;
+		if( !empty($_GET['cat']) ) {
+			$catfilter = $_GET['cat'];
+		}
+		if( !empty($_POST['cat']) ) {
+			$catfilter = $_POST['cat'];
+		}
+		if( !empty($_GET['mime']) ) {
+			$mimefilter = $_GET['mime'];
+		}
+		if( !empty($_POST['mime']) ) {
+			$mimefilter = $_POST['mime'];
+		}
 
 // JS
 $postdatetimechange_add_js = <<<POSTDATETIMECHANGE1
@@ -488,43 +502,54 @@ jQuery('#postdatetimechange-tabs').responsiveTabs({
 <script type="text/javascript">
 POSTDATETIMECHANGE1;
 
+		if ( $readposttype === 'attachment' ) {
 			$args = array(
+				'post_type' => 'attachment',
+				'post_mime_type' => $mimefilter,
+				'numberposts' => -1,
+				'orderby' => 'date',
+				'order' => 'DESC'
+				); 
+		} else {
+			$args = array(
+				'category' => $catfilter,
 				'post_type' => $readposttype,
 				'numberposts' => -1,
 				'orderby' => 'date',
 				'order' => 'DESC'
 				); 
+		}
 
-			$postpages = get_posts($args);
+		$postpages = get_posts($args);
 
-			$postdatetimechange_mgsettings = get_option('postdatetimechange_mgsettings');
-			$pagemax = $postdatetimechange_mgsettings['pagemax'];
+		$postdatetimechange_mgsettings = get_option('postdatetimechange_mgsettings');
+		$pagemax = $postdatetimechange_mgsettings['pagemax'];
 
-			if (!empty($_GET['p'])){
-				$page = $_GET['p'];
-			} else {
-				$page = 1;
-			}
-			$count = 0;
-			$pagebegin = (($page - 1) * $pagemax) + 1;
-			$pageend = $page * $pagemax;
+		if (!empty($_GET['p'])){
+			$page = $_GET['p'];
+		} else {
+			$page = 1;
+		}
+		$count = 0;
+		$pagebegin = (($page - 1) * $pagemax) + 1;
+		$pageend = $page * $pagemax;
 
-			if ($postpages) {
-				foreach ( $postpages as $postpage ) {
-					++$count;
-					if ( $pagebegin <= $count && $count <= $pageend ) {
-						$postid = $postpage->ID;
+		if ($postpages) {
+			foreach ( $postpages as $postpage ) {
+				++$count;
+				if ( $pagebegin <= $count && $count <= $pageend ) {
+					$postid = $postpage->ID;
 $postdatetimechange_add_js .= <<<POSTDATETIMECHANGE2
 
 jQuery('#datetimepicker-postdatetimechange
 POSTDATETIMECHANGE2;
-			$postdatetimechange_add_js .= $postid;
+					$postdatetimechange_add_js .= $postid;
 $postdatetimechange_add_js .= <<<POSTDATETIMECHANGE3
 ').datetimepicker({format:'Y-m-d H:i'});
 POSTDATETIMECHANGE3;
-					}
 				}
 			}
+		}
 
 $postdatetimechange_add_js .= <<<POSTDATETIMECHANGE4
 
