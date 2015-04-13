@@ -447,16 +447,36 @@ class PostDateTimeChangeAdmin {
 									'post_modified_gmt' => $postdategmt,
 									'guid' => $newurl
 								);
+					wp_update_post( $up_post );
 				} else {
-					$up_post = array(
-									'ID' => $key,
-									'post_date' => $postdate,
-									'post_date_gmt' => $postdategmt,
-									'post_modified' => $postdate,
-									'post_modified_gmt' => $postdategmt
-								);
+					if ( $post_datas->post_date <> $postdate ) {
+						$up_post = array(
+										'ID' => $key,
+										'post_date' => $postdate,
+										'post_date_gmt' => $postdategmt,
+										'post_modified' => $postdate,
+										'post_modified_gmt' => $postdategmt
+									);
+						wp_update_post( $up_post );
+						if ( $post_datas->post_type <> 'attachment' ) {
+							$rev_post = array(
+											'post_author' => $post_datas->post_author,
+											'post_date' => $postdate,
+											'post_date_gmt' => $postdategmt,
+											'post_content' => $post_datas->post_content,
+											'post_title' => $post_datas->post_title,
+											'post_excerpt' => $post_datas->post_excerpt,
+											'post_status' => 'inherit',
+											'post_name' => $key.'-revision-from-'.$post_datas->post_date.'-to-'.$postdate,
+											'post_modified' => $postdate,
+											'post_modified_gmt' => $postdategmt,
+											'post_parent' => $key,
+											'post_type' => 'revision'
+										);
+							wp_insert_post( $rev_post );
+						}
+					}
 				}
-				wp_update_post( $up_post );
 			}
 		}
 

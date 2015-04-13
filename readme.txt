@@ -4,7 +4,7 @@ Donate link: http://pledgie.com/campaigns/28307
 Tags: admin, attachment, attachments, date, edit, media, page, pages, post, posts, time
 Requires at least: 3.0.1
 Tested up to: 4.1.1
-Stable tag: 2.2
+Stable tag: 2.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -32,6 +32,9 @@ none
 2. Media
 
 == Changelog ==
+
+= 2.3 =
+Add the revision.
 
 = 2.2 =
 Fixed the problem of the display of DateTimePicker at the time of application of the category filter and MIME type filter.
@@ -64,6 +67,7 @@ Attachments organize into month- and year-based folders by automatic.
 
 == Upgrade Notice ==
 
+= 2.3 =
 = 2.2 =
 = 2.1 =
 = 2.0 =
