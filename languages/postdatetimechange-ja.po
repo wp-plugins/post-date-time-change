@@ -21,8 +21,8 @@ msgid "Number of titles to show to this page"
 msgstr "このページへ表示数するタイトルの数"
 
 msgid ""
-"I need a donation. This is because, I want to continue the development and "
-"support of plugins."
+"Please make a donation if you like my work or would like to further the "
+"development of this plugin."
 msgstr ""
 "私はプラグインの開発とサポートを継続させるために寄付を必要としています。"
 

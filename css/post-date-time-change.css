@@ -26,3 +26,11 @@
 	font-size: 14px;
 }
 
+#postdatetimechange-loading-container {
+	display: none;
+}
+#postdatetimechange-loading {
+	position: relative;
+	left: 40%;
+	top: 10%;
+}

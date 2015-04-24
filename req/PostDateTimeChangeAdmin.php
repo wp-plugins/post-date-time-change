@@ -128,10 +128,15 @@ class PostDateTimeChangeAdmin {
 
 			<h3><?php _e('Edit date and time'); ?></h3>
 
+			<?php
+			echo '<div id="postdatetimechange-loading"><img src="'.POSTDATETIMECHANGE_PLUGIN_URL.'/css/loading.gif"></div>';
+			echo '<div id="postdatetimechange-loading-container">';
+			?>
+
 			<form method="post" action="<?php echo $scriptname; ?>">
 
 			<div class="submit">
-			 	<input type="submit" name="UpdateDateTimeChange" value="<?php _e('Change the date and time', 'postdatetimechange') ?>" />
+			 	<input type="submit" name="UpdateDateTimeChange" class="button-primary button-large" value="<?php _e('Change the date and time', 'postdatetimechange') ?>" />
 			</div>
 
 			<p>
@@ -282,17 +287,19 @@ class PostDateTimeChangeAdmin {
 				?>
 
 			<div class="submit">
-				<input type="submit" name="UpdateDateTimeChange" value="<?php _e('Change the date and time', 'postdatetimechange') ?>" />
+				<input type="submit" name="UpdateDateTimeChange" class="button-primary button-large" value="<?php _e('Change the date and time', 'postdatetimechange') ?>" />
 			</div>
 
 			</form>
+
+			</div>
 
 		</div>
 
 		<div id="postdatetimechange-tabs-2">
 		<div class="wrap">
 		<div style="padding:10px;border:#CCC 2px solid; margin:0 0 20px 0">
-			<h3><?php _e('I need a donation. This is because, I want to continue the development and support of plugins.', 'postdatetimechange'); ?></h3>
+			<h3><?php _e('Please make a donation if you like my work or would like to further the development of this plugin.', 'postdatetimechange'); ?></h3>
 			<div align="right">Katsushi Kawamori</div>
 			<h3 style="float: left;"><?php _e('Donate to this plugin &#187;'); ?></h3>
 <a href='https://pledgie.com/campaigns/28307' target="_blank"><img alt='Click here to lend your support to: Various Plugins for WordPress and make a donation at pledgie.com !' src='https://pledgie.com/campaigns/28307.png?skin_name=chrome' border='0' ></a>
@@ -573,6 +580,12 @@ POSTDATETIMECHANGE3;
 
 $postdatetimechange_add_js .= <<<POSTDATETIMECHANGE4
 
+</script>
+<script type="text/javascript">
+window.addEventListener( "load", function(){
+  jQuery("#postdatetimechange-loading").delay(2000).fadeOut();
+  jQuery("#postdatetimechange-loading-container").delay(2000).fadeIn();
+}, false );
 </script>
 <!-- END: Post Date Time Change -->
 
