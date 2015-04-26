@@ -4,7 +4,7 @@ Donate link: http://pledgie.com/campaigns/28307
 Tags: admin, attachment, attachments, date, edit, media, page, pages, post, posts, time
 Requires at least: 3.0.1
 Tested up to: 4.2
-Stable tag: 2.4
+Stable tag: 2.5
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -32,6 +32,9 @@ none
 2. Media
 
 == Changelog ==
+
+= 2.5 =
+Fixed the problem of pagenation.
 
 = 2.4 =
 Add progress display.
@@ -71,6 +74,7 @@ Attachments organize into month- and year-based folders by automatic.
 
 == Upgrade Notice ==
 
+= 2.5 =
 = 2.4 =
 = 2.3 =
 = 2.2 =

@@ -221,7 +221,10 @@ class PostDateTimeChangeAdmin {
 			$pagelast = ceil($pageallcount / $pagemax);
 
 			?>
-				<?php $this->pagenation($page, $pagebegin, $pageend, $pagelast, $scriptname, $readposttype, $catfilter, $mimefilter);
+				<?php
+				if ( $pagelast > 1 ) {
+					$this->pagenation($page, $pagebegin, $pageend, $pagelast, $scriptname, $readposttype, $catfilter, $mimefilter);
+				}
 				?>
 				<div style="border-bottom: 1px solid; padding-top: 5px; padding-bottom: 5px;">
 					<div>
@@ -283,7 +286,10 @@ class PostDateTimeChangeAdmin {
 			}
 
 			?>
-				<?php $this->pagenation($page, $pagebegin, $pageend, $pagelast, $scriptname, $readposttype, $catfilter, $mimefilter);
+				<?php
+				if ( $pagelast > 1 ) {
+					$this->pagenation($page, $pagebegin, $pageend, $pagelast, $scriptname, $readposttype, $catfilter, $mimefilter);
+				}
 				?>
 
 			<div class="submit">
