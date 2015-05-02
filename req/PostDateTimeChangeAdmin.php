@@ -141,7 +141,7 @@ class PostDateTimeChangeAdmin {
 
 			<p>
 			<div style="float:left;"><?php _e('Number of titles to show to this page', 'postdatetimechange'); ?>:<input type="text" name="postdatetimechange_mgsettings_pagemax" value="<?php echo $pagemax; ?>" size="3" /></div>
-			<input type="submit" name="ShowToPage" value="<?php _e('Save') ?>" />
+			<input type="submit" class="button" name="ShowToPage" value="<?php _e('Save') ?>" />
 			<div style="clear:both"></div>
 
 			<div>
@@ -158,7 +158,7 @@ class PostDateTimeChangeAdmin {
 			<option value="any"<?php echo $selectedany; ?>><?php _e('Posts'); ?></option>
 			<option value="attachment"<?php echo $selectedattach; ?>><?php _e('Media'); ?></option>
 			</select>
-			<input type="submit" value="<?php _e('Apply'); ?>">
+			<input type="submit" class="button" value="<?php _e('Apply'); ?>">
 			<span style="margin-right: 1em;"></span>
 			<?php
 			if ( $readposttype === 'attachment' ) {
@@ -180,7 +180,7 @@ class PostDateTimeChangeAdmin {
 				}
 				?>
 				</select>
-				<input type="submit" value="<?php _e('Filter'); ?>">
+				<input type="submit" class="button" value="<?php _e('Filter'); ?>">
 				<?php
 			} else {
 				$args = array(
@@ -197,7 +197,7 @@ class PostDateTimeChangeAdmin {
 				);
 				wp_dropdown_categories($catargs);
 				?>
-				<input type="submit" value="<?php _e('Filter'); ?>">
+				<input type="submit" class="button" value="<?php _e('Filter'); ?>">
 				<?php
 			}
 			?>
