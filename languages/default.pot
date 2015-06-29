@@ -15,9 +15,6 @@ msgid ""
 "media library."
 msgstr ""
 
-msgid "Number of titles to show to this page"
-msgstr ""
-
 msgid "Please make a donation if you like my work or would like to further the development of this plugin."
 msgstr ""
 
@@ -31,4 +28,7 @@ msgid "Mime type"
 msgstr ""
 
 msgid "All Mime types"
+msgstr ""
+
+msgid "Reviews"
 msgstr ""

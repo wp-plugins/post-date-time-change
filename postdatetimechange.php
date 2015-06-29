@@ -2,7 +2,7 @@
 /*
 Plugin Name: Post Date Time Change
 Plugin URI: http://wordpress.org/plugins/post-date-time-change/
-Version: 2.6
+Version: 2.7
 Description: Collectively change the date and time of each article of post or page or media library.
 Author: Katsushi Kawamori
 Author URI: http://riverforest-wp.info/

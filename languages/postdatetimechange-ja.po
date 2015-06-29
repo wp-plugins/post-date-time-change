@@ -17,9 +17,6 @@ msgid ""
 msgstr ""
 "ポストやページまたはメディアライブラリの各記事の日付と時刻を変更します。"
 
-msgid "Number of titles to show to this page"
-msgstr "このページへ表示数するタイトルの数"
-
 msgid ""
 "Please make a donation if you like my work or would like to further the "
 "development of this plugin."
@@ -37,3 +34,6 @@ msgstr "MIMEタイプ"
 
 msgid "All Mime types"
 msgstr "すべてのMIMEタイプ"
+
+msgid "Reviews"
+msgstr "レビュー"

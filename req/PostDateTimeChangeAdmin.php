@@ -79,9 +79,9 @@ class PostDateTimeChangeAdmin {
 		if( !empty($_GET['p']) ) {
 			$pagequery = $_GET['p'];
 		}
-		$readposttype = 'any';
-		if( !empty($_GET['posttype']) ) {
-			$readposttype = $_GET['posttype'];
+		$readpoststatus = 'publish';
+		if( !empty($_GET['poststatus']) ) {
+			$readpoststatus = $_GET['poststatus'];
 		}
 		$catfilter = 0;
 		$mimefilter = NULL;
@@ -100,8 +100,8 @@ class PostDateTimeChangeAdmin {
 				$this->posts_updated();
 				echo '<div class="updated"><ul><li>'.__('Changed the date and time.', 'postdatetimechange').'</li></ul></div>';
 			}
-			if( !empty($_POST['posttype']) ) {
-				$readposttype = $_POST['posttype'];
+			if( !empty($_POST['poststatus']) ) {
+				$readpoststatus = $_POST['poststatus'];
 			}
 			if( !empty($_POST['cat']) ) {
 				$catfilter = $_POST['cat'];
@@ -126,8 +126,6 @@ class PostDateTimeChangeAdmin {
 				</ul>
 				<div id="postdatetimechange-tabs-1">
 
-			<h3><?php _e('Edit date and time'); ?></h3>
-
 			<?php
 			echo '<div id="postdatetimechange-loading"><img src="'.POSTDATETIMECHANGE_PLUGIN_URL.'/css/loading.gif"></div>';
 			echo '<div id="postdatetimechange-loading-container">';
@@ -135,33 +133,37 @@ class PostDateTimeChangeAdmin {
 
 			<form method="post" action="<?php echo $scriptname; ?>">
 
-			<div class="submit">
+			<div style="padding-top: 5px; padding-bottom: 5px;">
 			 	<input type="submit" name="UpdateDateTimeChange" class="button-primary button-large" value="<?php _e('Change the date and time', 'postdatetimechange') ?>" />
 			</div>
 
 			<p>
-			<div style="float:left;"><?php _e('Number of titles to show to this page', 'postdatetimechange'); ?>:<input type="text" name="postdatetimechange_mgsettings_pagemax" value="<?php echo $pagemax; ?>" size="3" /></div>
+			<div style="float:left;"><?php _e('Number of items per page:'); ?><input type="text" name="postdatetimechange_mgsettings_pagemax" value="<?php echo $pagemax; ?>" size="3" /></div>
 			<input type="submit" class="button" name="ShowToPage" value="<?php _e('Save') ?>" />
 			<div style="clear:both"></div>
 
 			<div>
-			<select name="posttype">
+			<select name="poststatus">
 			<?php
-			$selectedany = NULL;
+			$selectedpublish = NULL;
+			$selecteddraft = NULL;
 			$selectedattach = NULL;
-			if ( $readposttype === 'any' ) {
-				$selectedany = ' selected';
-			} else if ( $readposttype === 'attachment' ) {
+			if ( $readpoststatus === 'publish' ) {
+				$selectedpublish = ' selected';
+			} else if ( $readpoststatus === 'draft' ) {
+				$selecteddraft = ' selected';
+			} else if ( $readpoststatus === 'attachment' ) {
 				$selectedattach = ' selected';
 			}
 			?>
-			<option value="any"<?php echo $selectedany; ?>><?php _e('Posts'); ?></option>
+			<option value="publish"<?php echo $selectedpublish; ?>><?php echo __('Posts').'-'.__('Publish'); ?></option>
+			<option value="draft"<?php echo $selecteddraft; ?>><?php echo __('Posts').'-'.__('Draft'); ?></option>
 			<option value="attachment"<?php echo $selectedattach; ?>><?php _e('Media'); ?></option>
 			</select>
 			<input type="submit" class="button" value="<?php _e('Apply'); ?>">
 			<span style="margin-right: 1em;"></span>
 			<?php
-			if ( $readposttype === 'attachment' ) {
+			if ( $readpoststatus === 'attachment' ) {
 				$args = array(
 					'post_type' => 'attachment',
 					'post_mime_type' => $mimefilter,
@@ -185,7 +187,8 @@ class PostDateTimeChangeAdmin {
 			} else {
 				$args = array(
 					'category' => $catfilter,
-					'post_type' => $readposttype,
+					'post_type' => 'any',
+					'post_status' => $readpoststatus, 
 					'numberposts' => -1,
 					'orderby' => 'date',
 					'order' => 'DESC'
@@ -223,22 +226,22 @@ class PostDateTimeChangeAdmin {
 			?>
 				<?php
 				if ( $pagelast > 1 ) {
-					$this->pagenation($page, $pagebegin, $pageend, $pagelast, $scriptname, $readposttype, $catfilter, $mimefilter);
+					$this->pagenation($page, $pagebegin, $pageend, $pagelast, $scriptname, $readpoststatus, $catfilter, $mimefilter);
 				}
 				?>
 				<div style="border-bottom: 1px solid; padding-top: 5px; padding-bottom: 5px;">
 					<div>
 					<?php
-					if ( $readposttype === 'attachment' ) {
+					if ( $readpoststatus === 'attachment' ) {
 						_e('Thumbnail'); ?> -
 					<?php
 					}
 					_e('Title'); ?> -
 					<?php
-					if ( $readposttype === 'any' ) {
+					if ( $readpoststatus <> 'attachment' ) {
 						_e('Type'); ?> -
 					<?php
-					} else if ( $readposttype === 'attachment' ) {
+					} else {
 						_e('Mime type', 'postdatetimechange'); ?> -
 					<?php
 					}
@@ -256,14 +259,14 @@ class PostDateTimeChangeAdmin {
 						$title = $postpage->post_title;
 						$link = $postpage->guid;
 						$thumb_html = NULL;
-						if ( $readposttype === 'attachment' ) {
+						if ( $readpoststatus === 'attachment' ) {
 							$link = get_attachment_link($postpage->ID);
 							$image_attr_thumbnail = wp_get_attachment_image_src($postpage->ID, 'thumbnail', true);
 							$thumb_html = '<img width="40" height="40" src="'.$image_attr_thumbnail[0].'" align="middle">';
-							$posttype = $postpage->post_mime_type;
+							$poststatus = $postpage->post_mime_type;
 						}
-						if ( $readposttype === 'any' ) {
-							$posttype = $postpage->post_type;
+						if ( $readpoststatus <> 'attachment' ) {
+							$poststatus = $postpage->post_type;
 						}
 						$date = $postpage->post_date;
 						$newdate = substr( $date , 0 , strlen($date)-3 );
@@ -273,7 +276,7 @@ class PostDateTimeChangeAdmin {
 						<?php echo $thumb_html; ?>
 						<a style="color: #4682b4;" title="<?php _e('View');?>" href="<?php echo $link; ?>" target="_blank"><?php echo $title; ?></a>
 						<span style="margin-right: 1em;"></span>
-						<?php echo $posttype; ?>
+						<?php echo $poststatus; ?>
 						<span style="margin-right: 1em;"></span>
 						<?php echo $date; ?>
 						<input type="text" id="datetimepicker-postdatetimechange<?php echo $postid; ?>" name="postdatetimechange_datetime[<?php echo $postid ?>]" value="<?php echo $newdate; ?>" />
@@ -288,11 +291,11 @@ class PostDateTimeChangeAdmin {
 			?>
 				<?php
 				if ( $pagelast > 1 ) {
-					$this->pagenation($page, $pagebegin, $pageend, $pagelast, $scriptname, $readposttype, $catfilter, $mimefilter);
+					$this->pagenation($page, $pagebegin, $pageend, $pagelast, $scriptname, $readpoststatus, $catfilter, $mimefilter);
 				}
 				?>
 
-			<div class="submit">
+			<div style="padding-top: 15px; padding-bottom: 5px;">
 				<input type="submit" name="UpdateDateTimeChange" class="button-primary button-large" value="<?php _e('Change the date and time', 'postdatetimechange') ?>" />
 			</div>
 
@@ -303,16 +306,25 @@ class PostDateTimeChangeAdmin {
 		</div>
 
 		<div id="postdatetimechange-tabs-2">
+
+		<?php
+		$plugin_datas = get_file_data( POSTDATETIMECHANGE_PLUGIN_BASE_DIR.'/postdatetimechange.php', array('version' => 'Version') );
+		$plugin_version = __('Version:').' '.$plugin_datas['version'];
+		?>
 		<div class="wrap">
-		<div style="padding:10px;border:#CCC 2px solid; margin:0 0 20px 0">
-			<h3><?php _e('Please make a donation if you like my work or would like to further the development of this plugin.', 'postdatetimechange'); ?></h3>
-			<div align="right">Katsushi Kawamori</div>
-			<h3 style="float: left;"><?php _e('Donate to this plugin &#187;'); ?></h3>
-<a href='https://pledgie.com/campaigns/28307' target="_blank"><img alt='Click here to lend your support to: Various Plugins for WordPress and make a donation at pledgie.com !' src='https://pledgie.com/campaigns/28307.png?skin_name=chrome' border='0' ></a>
-		</div>
+		<h4 style="margin: 5px; padding: 5px;">
+		<?php echo $plugin_version; ?> |
+		<a style="text-decoration: none;" href="https://wordpress.org/support/plugin/post-date-time-change" target="_blank"><?php _e('Support Forums') ?></a> |
+		<a style="text-decoration: none;" href="https://wordpress.org/support/view/plugin-reviews/post-date-time-change" target="_blank"><?php _e('Reviews', 'postdatetimechange') ?></a>
+		</h4>
+		<div style="width: 250px; height: 170px; margin: 5px; padding: 5px; border: #CCC 2px solid;">
+		<h3><?php _e('Please make a donation if you like my work or would like to further the development of this plugin.', 'postdatetimechange'); ?></h3>
+		<div style="text-align: right; margin: 5px; padding: 5px;"><span style="padding: 3px; color: #ffffff; background-color: #008000">Plugin Author</span> <span style="font-weight: bold;">Katsushi Kawamori</span></div>
+		<a style="margin: 5px; padding: 5px;" href='https://pledgie.com/campaigns/28307' target="_blank"><img alt='Click here to lend your support to: Various Plugins for WordPress and make a donation at pledgie.com !' src='https://pledgie.com/campaigns/28307.png?skin_name=chrome' border='0' ></a>
 		</div>
 
 		</div>
+
 		</div>
 		<?php
 	}
@@ -325,19 +337,19 @@ class PostDateTimeChangeAdmin {
 	 * string	$pageend
 	 * string	$pagelast
 	 * string	$scriptname
-	 * string	$readposttype
+	 * string	$readpoststatus
 	 * string	$catfilter
 	 * string	$mimefilter
 	 * return	$html
 	 */
-	function pagenation($page, $pagebegin, $pageend, $pagelast, $scriptname, $readposttype, $catfilter, $mimefilter){
+	function pagenation($page, $pagebegin, $pageend, $pagelast, $scriptname, $readpoststatus, $catfilter, $mimefilter){
 
 			$pageprev = $page - 1;
 			$pagenext = $page + 1;
-			$scriptnamefirst = add_query_arg( array('p' => '1', 'posttype' => $readposttype, 'cat' => $catfilter, 'mime' => $mimefilter ),  $scriptname);
-			$scriptnameprev = add_query_arg( array('p' => $pageprev, 'posttype' => $readposttype, 'cat' => $catfilter, 'mime' => $mimefilter ),  $scriptname);
-			$scriptnamenext = add_query_arg( array('p' => $pagenext, 'posttype' => $readposttype, 'cat' => $catfilter, 'mime' => $mimefilter ),  $scriptname);
-			$scriptnamelast = add_query_arg( array('p' => $pagelast, 'posttype' => $readposttype, 'cat' => $catfilter, 'mime' => $mimefilter ),  $scriptname);
+			$scriptnamefirst = add_query_arg( array('p' => '1', 'poststatus' => $readpoststatus, 'cat' => $catfilter, 'mime' => $mimefilter ),  $scriptname);
+			$scriptnameprev = add_query_arg( array('p' => $pageprev, 'poststatus' => $readpoststatus, 'cat' => $catfilter, 'mime' => $mimefilter ),  $scriptname);
+			$scriptnamenext = add_query_arg( array('p' => $pagenext, 'poststatus' => $readpoststatus, 'cat' => $catfilter, 'mime' => $mimefilter ),  $scriptname);
+			$scriptnamelast = add_query_arg( array('p' => $pagelast, 'poststatus' => $readpoststatus, 'cat' => $catfilter, 'mime' => $mimefilter ),  $scriptname);
 			?>
 			<div class="post-date-time-change-pages">
 			<span class="post-date-time-change-links">
@@ -390,7 +402,6 @@ class PostDateTimeChangeAdmin {
 			foreach ( $postdatetimechange_datetimes as $key => $value ) {
 				$postdate = $value.':00';
 				$postdategmt = get_gmt_from_date($postdate);
-
 				$post_datas = get_post ( $key );
 				$new_subdir = FALSE;
 				if ( $post_datas->post_type === 'attachment' && get_option( 'uploads_use_yearmonth_folders' ) ) {
@@ -468,7 +479,8 @@ class PostDateTimeChangeAdmin {
 										'post_date' => $postdate,
 										'post_date_gmt' => $postdategmt,
 										'post_modified' => $postdate,
-										'post_modified_gmt' => $postdategmt
+										'post_modified_gmt' => $postdategmt,
+										'edit_date' => TRUE
 									);
 						wp_update_post( $up_post );
 						if ( $post_datas->post_type <> 'attachment' ) {
@@ -501,12 +513,12 @@ class PostDateTimeChangeAdmin {
 	 */
 	function add_js(){
 
-		$readposttype = 'any';
-		if( !empty($_GET['posttype']) ) {
-			$readposttype = $_GET['posttype'];
+		$readpoststatus = 'publish';
+		if( !empty($_GET['poststatus']) ) {
+			$readpoststatus = $_GET['poststatus'];
 		}
-		if( !empty($_POST['posttype']) ) {
-			$readposttype = $_POST['posttype'];
+		if( !empty($_POST['poststatus']) ) {
+			$readpoststatus = $_POST['poststatus'];
 		}
 		$catfilter = 0;
 		$mimefilter = NULL;
@@ -535,7 +547,7 @@ jQuery('#postdatetimechange-tabs').responsiveTabs({
 <script type="text/javascript">
 POSTDATETIMECHANGE1;
 
-		if ( $readposttype === 'attachment' ) {
+		if ( $readpoststatus === 'attachment' ) {
 			$args = array(
 				'post_type' => 'attachment',
 				'post_mime_type' => $mimefilter,
@@ -546,7 +558,8 @@ POSTDATETIMECHANGE1;
 		} else {
 			$args = array(
 				'category' => $catfilter,
-				'post_type' => $readposttype,
+				'post_type' => 'any',
+				'post_status' => $readpoststatus, 
 				'numberposts' => -1,
 				'orderby' => 'date',
 				'order' => 'DESC'
